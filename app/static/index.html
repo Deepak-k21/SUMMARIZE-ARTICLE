@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Article Summarizer</title>
+  <meta name="description" content="Paste an article or a link and get a clear summary with key points.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">📝</span>
+        <div>
+          <h1>Article Summarizer</h1>
+          <p class="tagline">Paste an article or a link. Get the gist in seconds.</p>
+        </div>
+      </div>
+      <span id="engine-badge" class="badge" hidden></span>
+    </div>
+  </header>
+
+  <main class="wrap grid">
+    <section class="card" aria-labelledby="input-heading">
+      <h2 id="input-heading" class="visually-hidden">Article input</h2>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-text" aria-selected="true" aria-controls="panel-text" class="tab active">Paste text</button>
+        <button role="tab" id="tab-url" aria-selected="false" aria-controls="panel-url" class="tab">From a URL</button>
+      </div>
+
+      <form id="form" novalidate>
+        <div id="panel-text" role="tabpanel" aria-labelledby="tab-text">
+          <label for="text" class="visually-hidden">Article text</label>
+          <textarea id="text" rows="14" placeholder="Paste the full article here…"></textarea>
+          <div class="meta-row">
+            <span id="counter">0 words</span>
+            <button type="button" id="clear" class="link-btn">Clear</button>
+          </div>
+        </div>
+
+        <div id="panel-url" role="tabpanel" aria-labelledby="tab-url" hidden>
+          <label for="url" class="field-label">Article URL</label>
+          <input id="url" type="url" inputmode="url" placeholder="https://example.com/some-article" autocomplete="off">
+          <p class="hint">Works best with public news and blog articles. Paywalled pages may not work.</p>
+        </div>
+
+        <fieldset class="options">
+          <legend class="visually-hidden">Summary options</legend>
+
+          <div class="option">
+            <span class="field-label" id="length-label">Length</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="length-label">
+              <label><input type="radio" name="length" value="short"><span>Short</span></label>
+              <label><input type="radio" name="length" value="medium" checked><span>Medium</span></label>
+              <label><input type="radio" name="length" value="long"><span>Long</span></label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label for="style" class="field-label">Style</label>
+            <select id="style">
+              <option value="paragraph">Paragraph</option>
+              <option value="bullets">Bullet points</option>
+              <option value="tldr">TL;DR</option>
+              <option value="executive">Executive brief</option>
+              <option value="simple">Explain simply</option>
+            </select>
+          </div>
+
+          <div class="option">
+            <label class="switch">
+              <input type="checkbox" id="key-points" checked>
+              <span class="slider" aria-hidden="true"></span>
+              <span>Key points</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="submit" class="primary">
+          <span class="btn-label">Summarize</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <p class="hint center">Tip: press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to summarize.</p>
+      </form>
+    </section>
+
+    <section class="card result" aria-live="polite" aria-labelledby="result-heading">
+      <h2 id="result-heading" class="visually-hidden">Summary</h2>
+
+      <div id="empty" class="empty">
+        <div class="empty-icon" aria-hidden="true">✨</div>
+        <p>Your summary will appear here.</p>
+      </div>
+
+      <div id="error" class="error" role="alert" hidden></div>
+
+      <div id="loading" class="skeleton" hidden>
+        <div class="sk sk-title"></div>
+        <div class="sk"></div><div class="sk"></div><div class="sk short"></div>
+      </div>
+
+      <article id="output" hidden>
+        <div class="result-head">
+          <h3 id="out-title"></h3>
+          <div class="actions">
+            <button type="button" id="copy" class="ghost">Copy</button>
+            <button type="button" id="download" class="ghost">Download .md</button>
+          </div>
+        </div>
+        <a id="out-source" class="source" target="_blank" rel="noopener noreferrer" hidden></a>
+        <div id="out-summary" class="summary"></div>
+
+        <div id="out-points-wrap" hidden>
+          <h4>Key points</h4>
+          <ul id="out-points" class="points"></ul>
+        </div>
+
+        <dl class="stats">
+          <div><dt>Original</dt><dd id="st-orig"></dd></div>
+          <div><dt>Summary</dt><dd id="st-sum"></dd></div>
+          <div><dt>Shorter by</dt><dd id="st-ratio"></dd></div>
+          <div><dt>Time saved</dt><dd id="st-time"></dd></div>
+        </dl>
+        <p id="out-engine" class="hint"></p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    Summaries are generated by AI and can contain mistakes. Check important details against the original.
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
